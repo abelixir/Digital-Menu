@@ -53,6 +53,18 @@ export const getMenuItemById = async (req, res, next) => {
   }
 }
 
+const normalizeAvailability = (value) => {
+  if (value === true || value === 'true' || value === 1 || value === '1') {
+    return true
+  }
+
+  if (value === false || value === 'false' || value === 0 || value === '0') {
+    return false
+  }
+
+  return Boolean(value)
+}
+
 export const createMenuItem = async (req, res, next) => {
   try {
     const { name, description, price, category, available } = req.body
@@ -69,7 +81,7 @@ export const createMenuItem = async (req, res, next) => {
       description: description.trim(),
       price: Number(price),
       category,
-      available: available !== undefined ? Boolean(available) : true,
+      available: available !== undefined ? normalizeAvailability(available) : true,
       image: req.file ? `/uploads/${req.file.filename}` : '',
     }
 
@@ -104,7 +116,7 @@ export const updateMenuItem = async (req, res, next) => {
     if (description) item.description = description.trim()
     if (price !== undefined) item.price = Number(price)
     if (category) item.category = category
-    if (available !== undefined) item.available = Boolean(available)
+    if (available !== undefined) item.available = normalizeAvailability(available)
     if (req.file) item.image = `/uploads/${req.file.filename}`
 
     const updatedItem = await item.save()

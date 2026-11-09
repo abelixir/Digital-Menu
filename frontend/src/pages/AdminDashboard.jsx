@@ -15,6 +15,11 @@ const initialCategoryForm = {
   description: '',
 }
 
+const initialSettingsForm = {
+  restaurantName: '',
+  restaurantDescription: '',
+}
+
 const formatPrice = (value) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -27,6 +32,7 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState([])
   const [itemForm, setItemForm] = useState(initialItemForm)
   const [categoryForm, setCategoryForm] = useState(initialCategoryForm)
+  const [settingsForm, setSettingsForm] = useState(initialSettingsForm)
   const [editingItemId, setEditingItemId] = useState(null)
   const [editingCategoryId, setEditingCategoryId] = useState(null)
   const [imageFile, setImageFile] = useState(null)
@@ -36,13 +42,20 @@ export default function AdminDashboard() {
 
   const fetchAllData = async () => {
     try {
-      const [menuResponse, categoriesResponse] = await Promise.all([
+      const [menuResponse, categoriesResponse, settingsResponse] = await Promise.all([
         api.get('/menu'),
         api.get('/categories'),
+        api.get('/settings'),
       ])
 
       setMenuItems(Array.isArray(menuResponse.data.data) ? menuResponse.data.data : [])
       setCategories(Array.isArray(categoriesResponse.data.data) ? categoriesResponse.data.data : [])
+
+      const settings = settingsResponse.data?.data || {}
+      setSettingsForm({
+        restaurantName: settings.restaurantName || '',
+        restaurantDescription: settings.restaurantDescription || '',
+      })
     } catch (error) {
       setAlert({
         type: 'error',
@@ -92,6 +105,27 @@ export default function AdminDashboard() {
   const handleCategoryInputChange = (event) => {
     const { name, value } = event.target
     setCategoryForm((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleSettingsInputChange = (event) => {
+    const { name, value } = event.target
+    setSettingsForm((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleSettingsSubmit = async (event) => {
+    event.preventDefault()
+    setAlert({ type: '', message: '' })
+
+    try {
+      await api.put('/settings', settingsForm)
+      setAlert({ type: 'success', message: 'Restaurant details updated successfully.' })
+      await fetchAllData()
+    } catch (error) {
+      setAlert({
+        type: 'error',
+        message: error.response?.data?.message || 'Unable to update restaurant details.',
+      })
+    }
   }
 
   const handleItemSubmit = async (event) => {
@@ -281,6 +315,53 @@ export default function AdminDashboard() {
           {alert.message}
         </div>
       )}
+
+      <div className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft md:p-8">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-500">Restaurant details</p>
+            <h2 className="mt-2 text-2xl font-bold text-stone-900">Homepage settings</h2>
+          </div>
+        </div>
+
+        <form onSubmit={handleSettingsSubmit} className="mt-6 space-y-5">
+          <div>
+            <label htmlFor="restaurantName" className="mb-2 block text-sm font-medium text-stone-700">
+              Restaurant name
+            </label>
+            <input
+              id="restaurantName"
+              name="restaurantName"
+              value={settingsForm.restaurantName}
+              onChange={handleSettingsInputChange}
+              placeholder="Enter restaurant name"
+              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="restaurantDescription" className="mb-2 block text-sm font-medium text-stone-700">
+              Short description
+            </label>
+            <textarea
+              id="restaurantDescription"
+              name="restaurantDescription"
+              rows={4}
+              value={settingsForm.restaurantDescription}
+              onChange={handleSettingsInputChange}
+              placeholder="Describe your restaurant"
+              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-xl bg-orange-500 px-4 py-3 font-semibold text-white transition hover:bg-orange-600"
+          >
+            Save homepage details
+          </button>
+        </form>
+      </div>
 
       <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
         <section className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft md:p-8">

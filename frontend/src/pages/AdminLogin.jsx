@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 
 const defaultValues = {
-  email: 'admin@digitalmenu.com',
-  password: 'Admin@123',
+  email: '',
+  password: '',
 }
 
 export default function AdminLogin() {
@@ -46,13 +46,7 @@ export default function AdminLogin() {
       <div className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft md:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-500">Admin access</p>
         <h1 className="mt-2 text-3xl font-bold text-stone-900">Welcome back</h1>
-        <p className="mt-2 text-sm text-stone-500">Manage your digital menu and keep your listings up to date.</p>
-
-        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <p className="font-semibold">Demo credentials</p>
-          <p className="mt-1">Email: admin@digitalmenu.com</p>
-          <p>Password: Admin@123</p>
-        </div>
+        <p className="mt-2 text-sm text-stone-500">Manage your digital menu and restaurant details.</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
@@ -65,7 +59,8 @@ export default function AdminLogin() {
               type="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              placeholder="Enter your email"
+              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
               required
             />
           </div>
@@ -80,7 +75,8 @@ export default function AdminLogin() {
               type="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              placeholder="Enter your password"
+              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
               required
             />
           </div>

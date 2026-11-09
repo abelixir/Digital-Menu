@@ -8,6 +8,7 @@ import { seedDefaultAdmin } from './config/seedAdmin.js'
 import authRoutes from './routes/authRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import menuItemRoutes from './routes/menuItemRoutes.js'
+import restaurantRoutes from './routes/restaurantRoutes.js'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
 
 dotenv.config()
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/menu', menuItemRoutes)
+app.use('/api/settings', restaurantRoutes)
 
 app.use(notFoundHandler)
 app.use(errorHandler)
